@@ -1,0 +1,282 @@
+[
+    {
+        "id": "e0f106017879b83b",
+        "type": "tab",
+        "label": "Check Garage Closed at night",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "b51ba3a4697b6a0d",
+        "type": "function",
+        "z": "e0f106017879b83b",
+        "name": "create message",
+        "func": "msg.payload = \"Garage is currently open, closing!\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 560,
+        "y": 260,
+        "wires": [
+            [
+                "bd0ae3a92572d28c"
+            ]
+        ]
+    },
+    {
+        "id": "60b8baa31bd1ed54",
+        "type": "hb-status",
+        "z": "e0f106017879b83b",
+        "name": "GARAGE DOOR: Garage",
+        "Homebridge": "homebridge",
+        "Manufacturer": "Default-Manufacturer",
+        "Service": "Garage Door Opener",
+        "device": "homebridge0E:C4:08:AC:56:80Default-ManufacturerGARAGE DOOR: Garage00000041",
+        "conf": "cc7c7da13419b6f9",
+        "x": 390,
+        "y": 180,
+        "wires": [
+            [
+                "2c11078956c5740e"
+            ]
+        ]
+    },
+    {
+        "id": "2c11078956c5740e",
+        "type": "switch",
+        "z": "e0f106017879b83b",
+        "name": "check state",
+        "property": "payload.CurrentDoorState",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "0",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 250,
+        "y": 320,
+        "wires": [
+            [
+                "b51ba3a4697b6a0d",
+                "04547dff7c1fc6e3"
+            ],
+            [
+                "f240b3d0f0e9bfb6"
+            ]
+        ],
+        "outputLabels": [
+            "open",
+            "closed"
+        ]
+    },
+    {
+        "id": "bd0ae3a92572d28c",
+        "type": "slack",
+        "z": "e0f106017879b83b",
+        "name": "",
+        "channelURL": "https://hooks.slack.com/services/FILL/ME/IN",
+        "username": "Home Notifications",
+        "emojiIcon": "",
+        "channel": "",
+        "x": 750,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "04547dff7c1fc6e3",
+        "type": "change",
+        "z": "e0f106017879b83b",
+        "name": "set garage to close",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.TargetDoorState",
+                "pt": "msg",
+                "to": "1",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 570,
+        "y": 360,
+        "wires": [
+            [
+                "e8e485929b296184"
+            ]
+        ]
+    },
+    {
+        "id": "e8e485929b296184",
+        "type": "hb-control",
+        "z": "e0f106017879b83b",
+        "name": "GARAGE DOOR: Garage",
+        "Homebridge": "homebridge",
+        "Manufacturer": "Default-Manufacturer",
+        "Service": "Garage Door Opener",
+        "device": "homebridge0E:C4:08:AC:56:80Default-ManufacturerGARAGE DOOR: Garage00000041",
+        "conf": "cc7c7da13419b6f9",
+        "outputs": 0,
+        "x": 810,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "5181291738c2fce0",
+        "type": "cron",
+        "z": "e0f106017879b83b",
+        "name": "Trigger: Every Day at 11:59 PM",
+        "crontab": "59  23 * * *",
+        "x": 130,
+        "y": 180,
+        "wires": [
+            [
+                "60b8baa31bd1ed54"
+            ]
+        ]
+    },
+    {
+        "id": "a750dc65840c938a",
+        "type": "slack",
+        "z": "e0f106017879b83b",
+        "name": "",
+        "channelURL": "https://hooks.slack.com/services/FILL/ME/IN",
+        "username": "Home Notifications",
+        "emojiIcon": "",
+        "channel": "",
+        "x": 750,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "f240b3d0f0e9bfb6",
+        "type": "function",
+        "z": "e0f106017879b83b",
+        "name": "create message",
+        "func": "msg.payload = \"Garage is currently closed, doing nothing!\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 560,
+        "y": 520,
+        "wires": [
+            [
+                "a750dc65840c938a"
+            ]
+        ]
+    },
+    {
+        "id": "1acce425d3c4193f",
+        "type": "comment",
+        "z": "e0f106017879b83b",
+        "name": "CRON trigger daily",
+        "info": "Use a cron trigger to run flow daily at 11:59 PM\n\nCheck https://crontab.cronhub.io/ for details on what to put in for the CRON expression",
+        "x": 90,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "2bf3113c57d7cca4",
+        "type": "comment",
+        "z": "e0f106017879b83b",
+        "name": "Get the state of Garage Door",
+        "info": "",
+        "x": 400,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "9f3bf345d5f4aeb2",
+        "type": "comment",
+        "z": "e0f106017879b83b",
+        "name": "Check state of Garage Door",
+        "info": "If msg.payload.CurrentDoorState == 0, it's currently open, action needs to be taken\n\nIf msg.payload.CurrentDoorState ==1, it's closed, take no action (in this case, a slack message is sent saying that no action will be taken)",
+        "x": 300,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "87ab8449a4f0fb8c",
+        "type": "comment",
+        "z": "e0f106017879b83b",
+        "name": "Create a slack message",
+        "info": "",
+        "x": 580,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "101a99a9f4acc021",
+        "type": "comment",
+        "z": "e0f106017879b83b",
+        "name": "send slack message",
+        "info": "",
+        "x": 790,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "f3045c4bcdc58a17",
+        "type": "comment",
+        "z": "e0f106017879b83b",
+        "name": "setup target state",
+        "info": "Creates msg.payload.TargetDoorState, and sets it to 1, indicating that we want the door closed",
+        "x": 560,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "828149d0e35cbe85",
+        "type": "comment",
+        "z": "e0f106017879b83b",
+        "name": "execute closure",
+        "info": "",
+        "x": 780,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "94ba3a7353e2f967",
+        "type": "comment",
+        "z": "e0f106017879b83b",
+        "name": "send slack message",
+        "info": "",
+        "x": 790,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "32c1218770129d45",
+        "type": "comment",
+        "z": "e0f106017879b83b",
+        "name": "Create a slack message",
+        "info": "",
+        "x": 580,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "cc7c7da13419b6f9",
+        "type": "hb-conf",
+        "username": "000-00-000",
+        "macAddress": ""
+    }
+]

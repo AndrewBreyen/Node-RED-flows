@@ -1,0 +1,350 @@
+[
+    {
+        "id": "7cf6b0a8f4b56f75",
+        "type": "tab",
+        "label": "Garage Notification + Close",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "83143288e9d95a73",
+        "type": "hb-event",
+        "z": "7cf6b0a8f4b56f75",
+        "name": "GARAGE DOOR: Garage",
+        "Homebridge": "homebridge",
+        "Manufacturer": "Default-Manufacturer",
+        "Service": "Garage Door Opener",
+        "device": "homebridge0E:C4:08:AC:56:80Default-ManufacturerGARAGE DOOR: Garage00000041",
+        "conf": "cc7c7da13419b6f9",
+        "sendInitialState": false,
+        "x": 130,
+        "y": 460,
+        "wires": [
+            [
+                "de278be0c9682a2a"
+            ]
+        ]
+    },
+    {
+        "id": "de278be0c9682a2a",
+        "type": "switch",
+        "z": "7cf6b0a8f4b56f75",
+        "name": "check state",
+        "property": "payload.CurrentDoorState",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "0",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 410,
+        "y": 460,
+        "wires": [
+            [
+                "065e19eab9cf92e2",
+                "bd51f51f17be4fad",
+                "adc1faa824b91801"
+            ],
+            [
+                "8a0a99c26af625dd"
+            ]
+        ],
+        "outputLabels": [
+            "open",
+            "close"
+        ]
+    },
+    {
+        "id": "065e19eab9cf92e2",
+        "type": "stoptimer",
+        "z": "7cf6b0a8f4b56f75",
+        "duration": "30",
+        "units": "Minute",
+        "payloadtype": "num",
+        "payloadval": "0",
+        "name": "",
+        "x": 720,
+        "y": 420,
+        "wires": [
+            [
+                "ad6e04500135b85e"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "8a0a99c26af625dd",
+        "type": "change",
+        "z": "7cf6b0a8f4b56f75",
+        "name": "stop timer if closed",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "STOP",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 470,
+        "y": 560,
+        "wires": [
+            [
+                "065e19eab9cf92e2",
+                "bd51f51f17be4fad",
+                "adc1faa824b91801"
+            ]
+        ]
+    },
+    {
+        "id": "5c388436609a594a",
+        "type": "slack",
+        "z": "7cf6b0a8f4b56f75",
+        "name": "",
+        "channelURL": "https://hooks.slack.com/services/FILL/ME/IN",
+        "username": "Home Notifications",
+        "emojiIcon": "",
+        "channel": "",
+        "x": 1130,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "ad6e04500135b85e",
+        "type": "function",
+        "z": "7cf6b0a8f4b56f75",
+        "name": "create message",
+        "func": "msg.payload = \"Garage has been open for 30 minutes!\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 940,
+        "y": 420,
+        "wires": [
+            [
+                "5c388436609a594a"
+            ]
+        ]
+    },
+    {
+        "id": "bd51f51f17be4fad",
+        "type": "stoptimer",
+        "z": "7cf6b0a8f4b56f75",
+        "duration": "1",
+        "units": "Hour",
+        "payloadtype": "num",
+        "payloadval": "0",
+        "name": "",
+        "x": 710,
+        "y": 520,
+        "wires": [
+            [
+                "885f9c154571c80e"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "adc1faa824b91801",
+        "type": "stoptimer",
+        "z": "7cf6b0a8f4b56f75",
+        "duration": "2",
+        "units": "Hour",
+        "payloadtype": "num",
+        "payloadval": "0",
+        "name": "",
+        "x": 710,
+        "y": 640,
+        "wires": [
+            [
+                "c4ca2ebd2b50a557",
+                "e147eebf8ef29312"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "885f9c154571c80e",
+        "type": "function",
+        "z": "7cf6b0a8f4b56f75",
+        "name": "create message",
+        "func": "msg.payload = \"Garage has been open for 1 hour!\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 940,
+        "y": 520,
+        "wires": [
+            [
+                "5c388436609a594a"
+            ]
+        ]
+    },
+    {
+        "id": "c4ca2ebd2b50a557",
+        "type": "function",
+        "z": "7cf6b0a8f4b56f75",
+        "name": "create message",
+        "func": "msg.payload = \"Garage has been open for 2 hours, closing!\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 940,
+        "y": 640,
+        "wires": [
+            [
+                "5c388436609a594a"
+            ]
+        ]
+    },
+    {
+        "id": "40702ee093c25f97",
+        "type": "hb-control",
+        "z": "7cf6b0a8f4b56f75",
+        "name": "GARAGE DOOR: Garage",
+        "Homebridge": "homebridge",
+        "Manufacturer": "Default-Manufacturer",
+        "Service": "Garage Door Opener",
+        "device": "homebridge0E:C4:08:AC:56:80Default-ManufacturerGARAGE DOOR: Garage00000041",
+        "conf": "cc7c7da13419b6f9",
+        "outputs": 0,
+        "x": 1190,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "e147eebf8ef29312",
+        "type": "change",
+        "z": "7cf6b0a8f4b56f75",
+        "name": "set garage to close",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.TargetDoorState",
+                "pt": "msg",
+                "to": "1",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 930,
+        "y": 720,
+        "wires": [
+            [
+                "40702ee093c25f97"
+            ]
+        ]
+    },
+    {
+        "id": "f9e39b101b5863f6",
+        "type": "comment",
+        "z": "7cf6b0a8f4b56f75",
+        "name": "state listener",
+        "info": "listens for state change of garage door.\nOn change, pass the payload to the next node",
+        "x": 130,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "f043d6dc0769e13d",
+        "type": "comment",
+        "z": "7cf6b0a8f4b56f75",
+        "name": "parse state",
+        "info": "Parse `msg.payload.CurrentDoorState`\nIF CurrentDoorState is 0 = it's open\n    THEN start timers\nIF CurrentDoorState is 1 = it's closed\n    THEN stop timers",
+        "x": 400,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "e82e402683b2e802",
+        "type": "comment",
+        "z": "7cf6b0a8f4b56f75",
+        "name": "door closed listener",
+        "info": "listen for door closed message\nif recieved, set msg.payload to STOP, \nsend that msg to timers to stop them",
+        "x": 470,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "1126bd590a0a16b8",
+        "type": "comment",
+        "z": "7cf6b0a8f4b56f75",
+        "name": "three timers",
+        "info": "Three timers are used to send different messages and do different things. \n\nFirst two, 30 mins and 1 hour just send a warning message to Slack\n\nAfter 2 hours, slack message is sent, and door is closed",
+        "x": 710,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "4e2317a8eff34f46",
+        "type": "comment",
+        "z": "7cf6b0a8f4b56f75",
+        "name": "send slack message",
+        "info": "send the message created in previous node using Slack Bot ",
+        "x": 1170,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "63173cf643bc690e",
+        "type": "comment",
+        "z": "7cf6b0a8f4b56f75",
+        "name": "three messages",
+        "info": "Three different messages depending on which timer has elapsed",
+        "x": 940,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "75081599735a404c",
+        "type": "comment",
+        "z": "7cf6b0a8f4b56f75",
+        "name": "setup target state",
+        "info": "Creates msg.payload.TargetDoorState, and sets it to 1, indicating that we want the door closed",
+        "x": 920,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "9c237dcc7ae73d80",
+        "type": "comment",
+        "z": "7cf6b0a8f4b56f75",
+        "name": "execute closure",
+        "info": "Close the door",
+        "x": 1160,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "cc7c7da13419b6f9",
+        "type": "hb-conf",
+        "username": "000-00-000",
+        "macAddress": ""
+    }
+]
